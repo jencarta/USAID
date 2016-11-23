@@ -1,0 +1,166 @@
+<html>
+<head>
+  <title>Construction Management demo</title>
+  <link rel="stylesheet" href="master.css" type="text/css">
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <style>
+    #map{ height: 100% }
+  </style>
+
+</head>
+<body>
+
+  <div id="map"></div>
+  
+  <div class="custom-popup">
+    <h1>Robertsport</h1>
+    <h2>Documents</h2>
+    <div class="accordionItem">
+      <h3>Daily Reports</h3>
+      <div>
+        <p>Report 1<br>
+        report 2</p>
+      </div>
+    </div>
+
+    <div class="accordionItem">
+      <h3>Inspection Logs</h3>
+      <div>
+        <p>Log1<br>Log2<br>Log3</p>
+      </div>
+    </div>
+
+    <div class="accordionItem">
+      <h3>Construction Contacts</h3>
+      <div>
+        <p>Joe Schmoe</p>
+      </div>
+    </div>
+
+    <div class="accordionItem">
+      <h3>Construction Manual</h3>
+      <div>
+        <p>The manual</p>
+      </div>
+    </div>
+
+    <h2>Photos</h2>
+    <div class="accordionItem">
+      <h3>May 2016</h3>
+      <div>
+        <p>Photo 1</p>
+      </div>
+    </div>
+
+    <div class="accordionItem">
+      <h3>April 2016</h3>
+      <div>
+        <p>Photo 2<br>Photo 3</p>
+      </div>
+    </div>
+
+    <div class="accordionItem">
+      <h3>March 2016</h3>
+      <div>
+        <p></p>
+      </div>
+    </div>
+
+    <div class="accordionItem">
+      <h3>January 2016</h3>
+      <div>
+        <p>Photo 4</p>
+      </div>
+    </div>
+
+    <div class="accordionItem">
+      <h3>October 2015</h3>
+      <div>
+        <p>Photo 5</p>
+      </div>
+    </div>
+
+    <div class="accordionItem">
+      <h3>September 2015</h3>
+      <div>
+        <p>Photo 6</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+ 
+    var accordionItems = new Array();
+
+    function init() {
+
+      // Grab the accordion items from the page
+      var divs = document.getElementsByTagName( 'div' );
+      for ( var i = 0; i < divs.length; i++ ) {
+        if ( divs[i].className == 'accordionItem' ) accordionItems.push( divs[i] );
+      }
+
+      // Assign onclick events to the accordion item headings
+      for ( var i = 0; i < accordionItems.length; i++ ) {
+        var h3 = getFirstChildWithTagName( accordionItems[i], 'H3' );
+        h3.onclick = toggleItem;
+      }
+
+      // Hide all accordion item bodies except the first
+      for ( var i = 0; i < accordionItems.length; i++ ) {
+        accordionItems[i].className = 'accordionItem hide';
+      }
+    }
+
+    function toggleItem() {
+      var itemClass = this.parentNode.className;
+
+      // Hide all items
+      for ( var i = 0; i < accordionItems.length; i++ ) {
+        accordionItems[i].className = 'accordionItem hide';
+      }
+
+      // Show this item if it was previously hidden
+      if ( itemClass == 'accordionItem hide' ) {
+        this.parentNode.className = 'accordionItem';
+      }
+    }
+
+    function getFirstChildWithTagName( element, tagName ) {
+      for ( var i = 0; i < element.childNodes.length; i++ ) {
+        if ( element.childNodes[i].nodeName == tagName ) return element.childNodes[i];
+      }
+    }
+
+  // initialize the map
+  var map = L.map('map').setView([7.25, -10], 8);
+ 
+  // load a tile layer
+  L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+      maxZoom: 19,
+      minZoom: 1
+    }).addTo(map);
+  
+  var locationIcon = L.icon({
+      iconUrl: 'Location.png',
+      iconSize: [32,32]
+  });
+  var legend = L.control({position: 'bottomleft'});
+  legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'iconinfo');
+    div.innerHTML += '<img width=100 src="USAID_Horizontal_RGB_294.png">'
+    return div;
+  };
+  legend.addTo(map);
+  var marker1 = L.marker([6.752156, -11.367549], {icon: locationIcon});
+  marker1.bindPopup($(".custom-popup").html());
+  marker1.addTo(map);
+  //var popup1 = marker1._popup;
+  
+  </script>
+</body>
+</html>

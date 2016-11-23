@@ -1,0 +1,143 @@
+<html>
+<head>
+  <title>Construction Management demo</title>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <style>
+    #map{ height: 100% }
+  </style>
+</head>
+<body>
+ 
+  <div id="map"></div>
+ 
+  <script>
+ 
+  // initialize the map
+  var map = L.map('map').setView([7.25, -10], 8);
+ 
+  // load a tile layer
+  L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+      maxZoom: 19,
+      minZoom: 1
+    }).addTo(map);
+  
+  var legend = L.control({position: 'bottomleft'});
+  legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'iconinfo');
+    div.innerHTML += '<img width=20 src="document.png" style="vertical-align: middle;"/> Documents<br>' +
+      '<img width=20 src="camera.png" style="vertical-align: middle;"/> Photos<br>' +
+      '<img width=20 src="document_photo.png" style="vertical-align: middle;"/> Documents and photos<br>' +
+      '<img width=20 src="Location.png" style="vertical-align: middle;"/> Location only<br>' +
+      '<img width=100 src="USAID_Horizontal_RGB_294.png">'
+    return div;
+  };
+  legend.addTo(map);
+ 
+  $.getJSON("https://rawgit.com/jencarta/geojson_data/master/construction3.geojson",function(data){
+    var photoIcon = L.icon({
+      iconUrl: 'camera.png',
+      iconSize: [32,32]
+    });
+    var docIcon = L.icon({
+      iconUrl: 'document.png',
+      iconSize: [32,32]
+    });
+    var docphotoIcon = L.icon({
+      iconUrl: 'document_photo.png',
+      iconSize: [32,32]
+    });
+    var locationIcon = L.icon({
+      iconUrl: 'Location.png',
+      iconSize: [32,32]
+    });
+    var locations = L.geoJson(data,{
+      pointToLayer: function(feature,latlng){
+        var numdocs = 0;
+        var marker;
+        var docsrc = '';
+        if (feature.properties.documents == 'none') {
+          docsrc = '';
+          //marker = L.marker(latlng,{icon: docIcon});
+        }
+        else {
+          var docval = feature.properties.documents;
+          var doclist = docval.split(',');
+          var docdescrtxt = feature.properties.doc_descr;
+          var docdescr = docdescrtxt.split(';');
+          //photosrc = 'list length: ' + count.toString();
+          docsrc += '<font color="#aa0000"><b>Documents:</b></font><br>'
+          for (i = 0; i < doclist.length; i++) {
+            if (doclist[i] != '') {
+              //var docnamesplit = doclist[i].split('/');
+              //var doctype = docnamesplit[0];
+              docsrc += '<a href="' + doclist[i] + '">' + docdescr[i] + '</a>';
+              numdocs += 1;
+            }
+            else {
+            docsrc += docdescr[i];
+            }
+            if (i < (doclist.length - 1)) {
+              docsrc += '<br>'
+            }
+          }
+        }
+        var photosrc = '';
+        if (feature.properties.photos == 'none') {
+          photosrc = '';
+          //marker = L.marker(latlng);
+          //marker = L.marker(latlng,{icon: docIcon});
+        }
+        else {
+          var photoval = feature.properties.photos;
+          var photolist = photoval.split(",");
+          var phototext = feature.properties.descr;
+          var descrtext = phototext.split(";");
+          //var photodescr = phototext.split(";");
+          var count = photolist.length;
+          //photosrc = 'list length: ' + count.toString();
+          photosrc += '<font color="#aa0000"><b>Project Photos:</b></font><br>'
+          for (i = 0; i < photolist.length; i++) {
+            photosrc += '<a href="photos/' + photolist[i] + '">' + descrtext[i] + '</a>';
+            if (i < (photolist.length - 1)) {
+              photosrc += '<br>'
+            }
+          }
+          //photosrc = '<a href="photos/' + feature.properties.photo + '"><img width = 200 src="photos/' + feature.properties.photo + '"></a>';
+          //marker = L.marker(latlng,{icon: photoIcon});
+        }
+        if (feature.properties.photos == 'none') {
+          if (numdocs == 0) {
+            marker = L.marker(latlng,{icon: locationIcon});
+          } else {
+            marker = L.marker(latlng,{icon: docIcon});
+          }
+        } else if (numdocs == 0) {
+          marker = L.marker(latlng,{icon: photoIcon});
+        } else {
+          marker = L.marker(latlng,{icon: docphotoIcon});
+        }
+        var popuptext = '<font size=+1><b>' + feature.properties.title + '</b></font>'
+        if (docsrc != '') {
+          popuptext += '<br>' + docsrc;
+        }
+        if (photosrc != '') {
+          popuptext += '<br>' + photosrc;
+        } else {
+          popuptext += '<br><font color="#aa0000"><b>Project Photos:</b></font><br>No photos'
+        }
+        marker.bindPopup(popuptext);
+        return marker;
+      }
+    });
+    var clusters = L.markerClusterGroup();
+    clusters.addLayer(locations);
+    map.addLayer(clusters);
+  });
+ 
+  </script>
+</body>
+</html>

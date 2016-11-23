@@ -1,0 +1,55 @@
+body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+        font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif;
+	vertical-align: baseline;
+	background-color: #f5f0dd;
+	min-width: 968px;
+}
+h1 {
+        margin: 0;
+        padding: 0.2em;
+        font-size: 1em;
+}
+
+h2 {
+	margin: 0;
+	padding: 0.2em;
+	font-size: .9em;
+	color: #a00;
+}
+p {
+	margin: 0;
+	padding: 0.2em;
+	font-size: .7em;
+}
+.custom-popup .accordionItem h3 {
+	margin: 0;
+	padding: 0.2em;
+	font-size: .7em;
+	color: #00f;
+}
+.custom-popup .accordionItem h3:hover {
+	cursor: pointer;
+}
+.custom-popup .accordionItem.hide h3 {
+	color: #000;
+}
+.custom-popup .accordionItem.hide div {
+	display: none;
+}
+.iconinfo {
+	padding: 6px 8px;
+	font: 10px/12px Arial, Helvetica, sans-serif;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
+}
+.iconinfo h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+

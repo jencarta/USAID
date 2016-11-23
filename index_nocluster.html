@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>Construction Management demo</title>
+  <link rel="stylesheet" href="master_alt2.css" type="text/css">
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <style>
+    #map{ height: 100% }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+  <script>
+ 
+  // initialize the map
+  var map = L.map('map').setView([7.25, -10], 8);
+ 
+  // load a tile layer
+  L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+      maxZoom: 19,
+      minZoom: 1
+    }).addTo(map);
+  
+  var locationIcon = L.icon({
+      iconUrl: 'Location.png',
+      iconSize: [32,32]
+  });
+  var legend = L.control({position: 'bottomleft'});
+  legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'iconinfo');
+    div.innerHTML += '<img width=100 src="USAID_Horizontal_RGB_294.png">'
+    return div;
+  };
+  legend.addTo(map);
+  var marker1 = L.marker([6.752156, -11.367549], {icon: locationIcon});
+  var popuptext = '<font size=+1><b>Robertsport</b></font><br>';
+  var linktext = '<a href="#" class="speciallink"><font color="#aa0000"><b>Documents:</b></font></a>';
+  var link = $(linktext).click(function() {
+    linktext2 = '<font color="#aa0000"><b>Documents:</b></font><br>doc1<br>doc2';
+    marker1._popup.setContent(popuptext);
+  });
+  var div = $('<div />').html(popuptext).append(link)[0];
+  marker1.bindPopup(div);
+  marker1.addTo(map);
+  //var popup1 = marker1._popup;
+  
+  </script>
+</body>
+</html>
